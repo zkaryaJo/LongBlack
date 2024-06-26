@@ -66,7 +66,7 @@ public class UserMainController {
 	 * @param loginDto
 	 * @return MemberDto.LoginSuccess : 로그인 성공시, accessToken 항목으로 jwt토큰을 전달.
 	 */
-	@PostMapping("/authenticate")
+	@PostMapping("/user/authenticate")
 	@ResponseBody
 	public Map login(@Valid @RequestBody MemberDto.Login loginDto, HttpServletResponse response) {
 		
@@ -80,7 +80,7 @@ public class UserMainController {
 			//스프링 시큐리티 인증 토큰 생성
 	        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 	        SecurityContextHolder.getContext().setAuthentication(authToken); //세션에 사용자 등록
-	        String token = jwtUtil.createJwt(member.getEmail(), member.getRole().toString(), 60*60*1000L);
+	        String token = jwtUtil.createJwt(member.getEmail(), member.getName(),  member.getRole().toString(), 60*60*1000L);
 	        
 	        // 쿠키에 인증토큰 저장
  			Cookie cookie = new Cookie("Authorization", "Bearer " + token);

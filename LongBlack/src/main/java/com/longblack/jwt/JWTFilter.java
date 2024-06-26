@@ -13,6 +13,7 @@ import com.longblack.domain.Member;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +26,30 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+    	String token = "";
         //request에서 Authorization 헤더를 찾음
         String authorization= request.getHeader("Authorization");
 
-        //Authorization 헤더 검증
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            System.out.println("token null");
-            filterChain.doFilter(request, response);
-
-            return;
+        if(authorization != null && authorization.startsWith("Bearer ")) {
+        	token = authorization.split(" ")[1];
+        }else {
+        	if(request.getCookies() != null) {
+        		for(Cookie item : request.getCookies()) {
+        			String name = item.getName();
+        			if("Authorization".equals(name)) {
+        				token = item.getValue().split(" ")[1];
+        				break;
+        			}
+        		}
+        	}
         }
-
-        String token = authorization.split(" ")[1];
+        
+        if("".equals(token)) {
+        	System.out.println("token null");
+        	filterChain.doFilter(request, response);
+        	
+        	return;
+        }
 
         //토큰 소멸 시간 검증
         if (jwtUtil.isExpired(token)) {
@@ -47,9 +60,13 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String email = jwtUtil.getEmail(token);
+        String name = jwtUtil.getName(token);
         String role = jwtUtil.getRole(token);
 
-        Member member = Member.builder().email(email).role(Role.USER).build();
+        Member member = Member.builder()
+        		.email(email)
+        		.name(name)
+        		.role(Role.USER).build();
 
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 

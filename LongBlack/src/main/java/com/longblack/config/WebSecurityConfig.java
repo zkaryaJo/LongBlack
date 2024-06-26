@@ -41,7 +41,7 @@ public class WebSecurityConfig {
 
 		http
 			.authorizeHttpRequests((auth) -> auth
-					.requestMatchers("/", "/user/login", "/user/main", "/authenticate", "/member/checkMail", "/member/checkUserName", "/member/signup").permitAll()
+					.requestMatchers("/", "/user/login", "/user/authenticate", "/member/checkMail", "/member/signup").permitAll()
 					.requestMatchers( "/css/**", "/js/**", "/images/**").permitAll() 
 					.requestMatchers("/h2-console/**").permitAll() // h2-console
 					.requestMatchers("/longblack/**").permitAll() // swagger

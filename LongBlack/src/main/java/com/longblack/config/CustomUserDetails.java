@@ -42,5 +42,9 @@ public class CustomUserDetails implements UserDetails {
 	public String getUsername() {
 		return member.getEmail();
 	}
+	
+	public String getName() {
+		return member.getName();
+	}
 
 }

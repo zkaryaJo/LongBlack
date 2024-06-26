@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,7 +54,6 @@ public class MemberController {
 		return ResponseEntity.ok(responseDto);
 	}
 	
-	
 	/**
 	 * 이메일 인증
 	 * @param request
@@ -77,78 +77,58 @@ public class MemberController {
 		 }
 		return map;
 	}
-//	
-//	/**
-//	 * 닉네임 중복 검증
-//	 * @param request
-//	 * @param param
-//	 * @return
-//	 */
-//	@PostMapping("/checkUserName")
-//	@ResponseBody
-//	public String checkUserName(@RequestBody Map param) {
-//		String result = ""; 
-//		 if (memberService.isUserNameExists(param)) {
-//			 result = "exist";
-//		 }else {
-//			 result = "useable";
-//		 }
-//		return result;
-//	}
-//	
-//	/**
-//	 * 회원 정보 수정
-//	 * @param param
-//	 * @param model
-//	 * @return
-//	 */
-//	@PostMapping("/update")
-//	@ResponseBody
-//	public Map updateMember(Authentication authentication, @RequestBody Map param, Model model){
-//		String result="";
-//		String email = authentication.getName();
-//	    Map map = new HashMap<>();
-//	    
-//		Map foundMember = memberService.findMemberByEmail(email);
-//		
-//	    if (foundMember != null) {
-//	    	memberService.insertMemberHistory(foundMember);
-//	    	
-//		    String rawPassword = (String) param.get("pw");
-//		    String encodedPassword = passwordEncoder.encode(rawPassword);
-//		    param.put("pw", encodedPassword);
-//		    param.put("member_sn", foundMember.get("member_sn"));
-//		    
-//	    	memberService.updateMember(param);
-//	    	result = "success";
-//	    }else {
-//	    	result = "error";
-//	    }
-//
-//	    map.put("result", result);
-//	    
-//        return map;
-//
-//	}
-//	
-//	/**
-//	 * 회원 상태 변경
-//	 * @param param
-//	 * @param model
-//	 * @return
-//	 */
+	
+	/**
+	 * 회원 정보 수정
+	 * @param param
+	 * @param model
+	 * @return
+	 */
+	@PostMapping("/update")
+	@ResponseBody
+	@Transactional
+	public Map updateMember(Authentication authentication, @RequestBody Map param, Model model){
+		String result="";
+	    Map map = new HashMap<>();
+	    
+	    Member foundMember = memberService.findByEmail(authentication.getName()); 
+		
+	    if (foundMember != null) {
+	    	
+		    String rawPassword = (String) param.get("password");
+		    
+		    foundMember.setPassword(passwordEncoder.encode(rawPassword));
+		    foundMember.setName(""+param.getOrDefault("name", foundMember.getName()));
+		    
+	    	result = "success";
+	    }else {
+	    	result = "error";
+	    }
+
+	    map.put("result", result);
+	    
+        return map;
+
+	}
+	
+	/**
+	 * 회원 상태 변경
+	 * @param param
+	 * @param model
+	 * @return
+	 */
 //	@PostMapping("/update/status")
+//	@ResponseBody
+//	@Transactional
 //	public String updateMemberStatus(Authentication authentication, @RequestBody Map param, Model model){
 //
-//		String email = authentication.getName();
 //		
-//		 Map foundMember = memberService.findMemberByEmail(email);
+//		Member foundMember = memberService.findByEmail(authentication.getName());
 //		    
 //		    if (foundMember != null) {
-//		        memberService.insertMemberHistory(param);
 //
 //		        if (param.containsKey("pw") && param.get("pw") != null) {
-//		            memberService.updateMemberStatus(param);
+//		           // memberService.updateMemberStatus(param);
 //		        }
 //		        
 //		        int updatedStatus = memberService.getStatusById(param);

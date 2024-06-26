@@ -3,14 +3,17 @@
 		<nav class="navbar navbar-expand-lg navbar-dark desktop-nav">
 		  <div class="container-fluid">
 		    <a class="navbar-brand" href="/">
-				<img class="logo" th:src="@{/images/njoblers_h.png}" alt="엔잡러스로고">
+				<img class="logo" th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
 			</a>
 			<ul class="nav nav-underline nav-underline-center">
 			  <li class="nav-item">
-			    <a class="nav-link" aria-current="page" href="/user/profits">수익관리</a>
+			    <a class="nav-link" aria-current="page" href="/user/orders">주문내역</a>
 			  </li>
 			  <li class="nav-item">
-			    <a class="nav-link" href="#">맛집 공유</a>
+			    <a class="nav-link" href="#">즐겨찾기</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" href="/user/notice">주변매장</a>
 			  </li>
 			  <li class="nav-item dropdown">
   		        <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -21,9 +24,6 @@
   		          <li><a class="dropdown-item" href="/user/delivery">악성 전달지</a></li>
   		        </ul>
   		      </li>
-			  <li class="nav-item">
-			    <a class="nav-link" href="/user/notice">배달정보영상</a>
-			  </li>
 			</ul>
 			
 			<th:block sec:authorize="isAnonymous()">
@@ -36,8 +36,8 @@
 			
 			<th:block sec:authorize="isAuthenticated()">
 				<div class="nav-user-wrap">
-					<span class="nav-user-text" sec:authentication="Principal.userRealName"></span>
-					<span>님 오늘도 힘차게 엔잡하세요.</span>
+					<span class="nav-user-text" sec:authentication="Principal.name"></span>
+					<span>님 오늘도 커피 맛있게 드세요.</span>
 				</div>
 				<ul class="nav nav-underline nav-mypage">
 					<li class="nav-item">
@@ -53,7 +53,7 @@
 		</nav>
 		<header class="mobile-header">
 			<a class="navbar-brand" href="/">
-				<img class="logo" th:src="@{/images/njoblers_h.png}" alt="엔잡러스로고">
+				<img class="logo" th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
 			</a>
 			
 			<th:block sec:authorize="isAnonymous()">
@@ -88,7 +88,7 @@
 				</a>
 				<a href="#" class="dock-bar-item">
 					<div class="dock-bar-item-icon restaurant"></div>
-					<p>맛집 공유</p>
+					<p>즐겨찾기</p>
 				</a>
 				<a href="/user/notice" class="dock-bar-item">
 					<div class="dock-bar-item-icon delivery"></div>
@@ -105,13 +105,13 @@
 				<div class="mobile-side">
 					<div class="side-logo">
 						<a class="navbar-brand" href="/">
-							<img class="logo" th:src="@{/images/njoblers_h.png}" alt="엔잡러스로고">
+							<img class="logo" th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
 						</a>
 					</div>
 					<th:block sec:authorize="isAuthenticated()">
 						<div class="nav-user-wrap">
-							<span class="nav-user-text" sec:authentication="Principal.userRealName"></span>
-							<span>님 오늘도 힘차게 엔잡하세요.</span>
+							<span class="nav-user-text" sec:authentication="Principal.name"></span>
+							<span>님 오늘도 커피 맛있게 드세요</span>
 						</div>
 					</th:block>
 					<div class="side-close">
@@ -127,7 +127,7 @@
 									<a href="/">배달 뉴스</a>
 								</li>
 								<li class="side-content-list-item">
-									<a href="/user/profits">수익관리</a>
+									<a href="/user/orders">주문내역</a>
 								</li>
 								<li class="side-content-list-item">
 									<a href="/user/pickup">악성 픽업지</a>
@@ -139,7 +139,7 @@
 									<a href="/user/notice">배달 정보영상</a>
 								</li>
 								<li class="side-content-list-item">
-									<a href="#">맛집 공유</a>
+									<a href="#">즐겨찾기</a>
 								</li>
 							</ul>
 							<div class="side-community-box">

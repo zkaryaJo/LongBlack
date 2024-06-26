@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-	<th:block th:replace="user/fragments/config::config"></th:block>
+	<th:block th:replace="~{user/fragments/config::config}"></th:block>
 	<script>
 		$(document).ready(function() {
 			
@@ -203,7 +203,7 @@
 		
 		    $.ajax({
 		        type: 'POST',
-		        url: '/authenticate',
+		        url: '/user/authenticate',
 		        contentType: 'application/json', 
 		        data: JSON.stringify(formData),
 		        success: function(response) {

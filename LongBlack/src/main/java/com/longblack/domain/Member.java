@@ -1,5 +1,8 @@
 package com.longblack.domain;
 
+import java.util.List;
+
+import org.hibernate.envers.Audited;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,6 +17,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +32,7 @@ import lombok.ToString;
 @Getter @Setter @ToString
 @Builder @NoArgsConstructor @AllArgsConstructor
 @Entity
+@Audited
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Table(name = "MEMBER")
 public class Member  {
@@ -39,9 +44,18 @@ public class Member  {
 	
 	private String name;
 	private String password;
+	private String address;
+    private String phone;
+    
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    
+    @OneToMany(mappedBy = "member")
+    private List<Order> orders;
 
-	@Enumerated(EnumType.STRING)
-	private Role role;
+    @OneToMany(mappedBy = "member")
+    private List<Review> reviews;
+
 	
 	public static Member toEntity(MemberDto.SignUp signUpDto, PasswordEncoder passwordEncoder, AesBytesEncryptor aesBytesEncryptor) {
 		

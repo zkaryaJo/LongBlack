@@ -1,5 +1,5 @@
 server:
-  port : 8080
+  port : 8083
   servlet:
     session:
       timeout: 1800
@@ -52,7 +52,7 @@ spring:
 
 logging:
   level:
-    '[org.springframework]': info
+    '[org.springframework]': debug
     
 symmetric:
   key: 3o3Test!@#!11

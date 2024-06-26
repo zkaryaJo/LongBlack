@@ -27,11 +27,6 @@ public class JWTUtil {
 		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
 	}
 	
-	public String getUserRegNo(String token) {
-		
-		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("regNo", String.class);
-	}
-	
 	public String getUserPassword(String token) {
 		
 		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("password", String.class);
@@ -42,15 +37,22 @@ public class JWTUtil {
 		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
 	}
 
+	public String getName(String token) {
+		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
+	}
+	
 	public Boolean isExpired(String token) {
 
 		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration()
 				.before(new Date());
 	}
 
-	public String createJwt(String email, String role, Long expiredMs) {
+	public String createJwt(String email, String name, String role, Long expiredMs) {
 
-		return Jwts.builder().claim("email", email).claim("role", role)
+		return Jwts.builder()
+				.claim("email", email)
+				.claim("name", name)
+				.claim("role", role)
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + expiredMs)).signWith(secretKey).compact();
 	}
