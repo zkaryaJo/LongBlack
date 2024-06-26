@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<head>
+		<meta charset="UTF-8">
+		<th:block th:replace="user/fragments/config::config"></th:block>
+		<link rel="shortcut icon" href="/images/njoblers.ico">
+		<title>LongBlack</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta content="minimum-scale=1.0, width=device-width, maximum-scale=1, user-scalable=yes" name="viewport" />
+		<meta name="description" content="you wanna Coffee?">
+		<meta name="keywords" content="longblack, coffee, 커피주문">
+		
+		<!-- Open Graph meta tags -->
+		<meta property="og:title" content="LongBlack">
+		<meta property="og:description" content="you wanna Coffee?">
+		<!-- <meta property="og:image" content="/images/njoblers_h.png"> -->
+		
+		<meta property="og:url" content="https://longblacks.co.kr">
+		<meta property="og:type" content="website">
+		<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6943330902991577" crossorigin="anonymous"></script> -->
+	</head>
+	
+	<body>
+		<th:block th:replace="user/fragments/header::header"></th:block>
+		<!-- ad -->
+		<!-- <th:block th:replace="user/fragments/advertisement::advertisement"></th:block> -->
+		
+		<!-- Content -->
+		<th:block layout:fragment="content"></th:block>
+		
+		<!-- Footer-->
+		<th:block th:replace="user/fragments/footer::footer"></th:block>
+	</body>
+</html>
+

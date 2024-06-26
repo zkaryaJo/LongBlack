@@ -1,0 +1,161 @@
+<html lagn="ko" xmlns:th="http://www.thymeleaf.org">
+	<th:block th:fragment="header">
+		<nav class="navbar navbar-expand-lg navbar-dark desktop-nav">
+		  <div class="container-fluid">
+		    <a class="navbar-brand" href="/">
+				<img class="logo" th:src="@{/images/njoblers_h.png}" alt="엔잡러스로고">
+			</a>
+			<ul class="nav nav-underline nav-underline-center">
+			  <li class="nav-item">
+			    <a class="nav-link" aria-current="page" href="/user/profits">수익관리</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" href="#">맛집 공유</a>
+			  </li>
+			  <li class="nav-item dropdown">
+  		        <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+  		  			기록 저장소
+  		        </button>
+  		        <ul class="dropdown-menu dropdown-menu-dark">
+  		          <li><a class="dropdown-item" href="/user/pickup">악성 픽업지</a></li>
+  		          <li><a class="dropdown-item" href="/user/delivery">악성 전달지</a></li>
+  		        </ul>
+  		      </li>
+			  <li class="nav-item">
+			    <a class="nav-link" href="/user/notice">배달정보영상</a>
+			  </li>
+			</ul>
+			
+			<th:block sec:authorize="isAnonymous()">
+				<ul class="nav nav-underline nav-mypage not-login">
+					<li class="nav-item">
+					  <a class="nav-link" href="/user/login">로그인</a>
+					</li>
+				</ul>
+			</th:block>
+			
+			<th:block sec:authorize="isAuthenticated()">
+				<div class="nav-user-wrap">
+					<span class="nav-user-text" sec:authentication="Principal.userRealName"></span>
+					<span>님 오늘도 힘차게 엔잡하세요.</span>
+				</div>
+				<ul class="nav nav-underline nav-mypage">
+					<li class="nav-item">
+					  <a class="nav-link" href="/member/mypage">마이페이지</a>
+					</li>
+					<li class="nav-item">
+					  <a class="nav-link" href="/logout">로그아웃</a>
+					</li>
+				</ul>
+			</th:block>
+			
+		  </div>
+		</nav>
+		<header class="mobile-header">
+			<a class="navbar-brand" href="/">
+				<img class="logo" th:src="@{/images/njoblers_h.png}" alt="엔잡러스로고">
+			</a>
+			
+			<th:block sec:authorize="isAnonymous()">
+				<a href="/user/login" class="mobile-login-btn">
+					<img class="login-icon" th:src="@{/images/user.png}" alt="user">
+					<p class="">로그인</p>
+				</a>
+			</th:block>
+			
+			<th:block sec:authorize="isAuthenticated()">
+				<div class="mobile-header-auth">
+					<a href="/member/mypage" class="mobile-login-btn me-1">
+						<img class="login-icon" th:src="@{/images/user.png}" alt="user">
+						<p class="">마이페이지</p>
+					</a>
+					<a href="/logout" class="mobile-login-btn">
+						<img class="login-icon" th:src="@{/images/user.png}" alt="user">
+						<p class="">로그아웃</p>
+					</a>
+				</div>
+			</th:block>
+		</header>
+		<div class="mobile-dock-bar">
+			<ul class="dock-bar-inner">
+				<a href="/" class="dock-bar-item">
+					<div class="dock-bar-item-icon home"></div>
+					<p>홈</p>
+				</a>
+				<a href="/user/profits" class="dock-bar-item">
+					<div class="dock-bar-item-icon profits"></div>
+					<p>수익 관리</p>
+				</a>
+				<a href="#" class="dock-bar-item">
+					<div class="dock-bar-item-icon restaurant"></div>
+					<p>맛집 공유</p>
+				</a>
+				<a href="/user/notice" class="dock-bar-item">
+					<div class="dock-bar-item-icon delivery"></div>
+					<p>배달 정보</p>
+				</a>
+				<a href="javascript:void(0);" class="dock-bar-item" id="more-menu">
+					<div class="dock-bar-item-icon more"></div>
+					<p>전체</p>
+				</a>
+			</ul>
+		</div>
+		<div class="mobile-side-menu">
+			<div class="mobile-side-inner">
+				<div class="mobile-side">
+					<div class="side-logo">
+						<a class="navbar-brand" href="/">
+							<img class="logo" th:src="@{/images/njoblers_h.png}" alt="엔잡러스로고">
+						</a>
+					</div>
+					<th:block sec:authorize="isAuthenticated()">
+						<div class="nav-user-wrap">
+							<span class="nav-user-text" sec:authentication="Principal.userRealName"></span>
+							<span>님 오늘도 힘차게 엔잡하세요.</span>
+						</div>
+					</th:block>
+					<div class="side-close">
+						<button class="side-close-btn" id="side-close-btn">닫기</button>
+					</div>
+					<div class="side-box">
+						<div class="side-content">
+							<ul class="side-content-list">
+								<li class="side-content-list-item">
+									<a href="/user/main">메인</a>
+								</li>
+								<li class="side-content-list-item">
+									<a href="/">배달 뉴스</a>
+								</li>
+								<li class="side-content-list-item">
+									<a href="/user/profits">수익관리</a>
+								</li>
+								<li class="side-content-list-item">
+									<a href="/user/pickup">악성 픽업지</a>
+								</li>
+								<li class="side-content-list-item">
+									<a href="/user/delivery">악성 전달지</a>
+								</li>
+								<li class="side-content-list-item">
+									<a href="/user/notice">배달 정보영상</a>
+								</li>
+								<li class="side-content-list-item">
+									<a href="#">맛집 공유</a>
+								</li>
+							</ul>
+							<div class="side-community-box">
+								<ul class="side-community-content">
+									<li>
+										<a href="#">공지사항</a>
+									</li>
+									<li>
+										<a href="#">자주 묻는 질문</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</th:block>
+</html>

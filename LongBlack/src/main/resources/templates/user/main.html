@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{user/layout/base}">
+	<head>
+		<script src="/js/weatherDesc.js"></script>
+		<script>
+		    // OpenWeatherMap API 및 카카오 맵 API 설정
+		    var weatherDayApiUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+		    var weatherApiUrl = 'https://api.openweathermap.org/data/2.5/weather';
+		    var weatherApiKey = '2388ffc83a98f44d96a02f1a4fc9babd';
+		    var airPollutionApiUrl = 'https://api.openweathermap.org/data/2.5/air_pollution/forecast';
+		    var kakaoMapApiUrl = 'https://dapi.kakao.com/v2/local/geo/coord2address.json';
+		    var kakaoMapApiKey = 'f07bc8364ce7097e228939f9e7453341';
+		
+		    $(document).ready(function() {
+		        loading();
+		        setTodayDate();
+		
+		        // Geolocation API를 사용하여 현재 위치를 가져오기
+		        navigator.geolocation.getCurrentPosition(function(position) {
+		            var latitude = position.coords.latitude;
+		            var longitude = position.coords.longitude;
+		
+		            // 현재 위치의 날씨 정보 가져오기
+		            var weatherInfoPromise = getWeatherInfo(latitude, longitude);
+		
+		            // 미세먼지 정보 가져오기
+		            var airPollutionPromise = getAirPollutionInfo(latitude, longitude);
+		
+		            // 주소 정보 가져오기
+		            var addressPromise = getAddress(latitude, longitude);
+		
+		            $.when(weatherInfoPromise, airPollutionPromise, addressPromise).done(function(weatherData, airPollutionData, address) {
+		                // 날씨 정보 처리
+		                displayWeatherInfo(weatherData[0], address);
+		
+		                // 미세먼지 정보 처리
+		                var airQualityIndex = airPollutionData[0].list[0].main.aqi;
+		                getAirPollutionLevel(airQualityIndex);
+		
+		                loading(true);
+		            });
+		        });
+		    });
+			
+		    // 현재 날씨 정보 가져오기
+		    function getWeatherInfo(latitude, longitude) {
+		        var requestUrl = weatherDayApiUrl + '?lat=' + latitude + '&lon=' + longitude +'&lang=kr&appid=' + weatherApiKey + '&units=metric';
+		        return $.getJSON(requestUrl);
+		    }
+		
+		    // 현재 위치 주소 가져오기
+		    function getAddress(latitude, longitude) {
+		        return $.ajax({
+		            url: kakaoMapApiUrl,
+		            type: 'GET',
+		            data: {
+		                x: longitude,
+		                y: latitude
+		            },
+		            beforeSend: function(xhr) {
+		                xhr.setRequestHeader('Authorization', 'KakaoAK ' + kakaoMapApiKey);
+		            }
+		        });
+		    }
+		
+		    // 미세먼지 정보 가져오기
+		    function getAirPollutionInfo(latitude, longitude) {
+		        var airPollutionRequestUrl = airPollutionApiUrl + '?lat=' + latitude + '&lon=' + longitude + '&appid=' + weatherApiKey;
+		        return $.getJSON(airPollutionRequestUrl);
+		    }
+		
+		    // 날씨 정보 표시
+		    function displayWeatherInfo(data, addressResponse) {
+		        var address = addressResponse[0].documents[0].address.address_name;
+		        $(".place").text(address);
+		
+		        if (Array.isArray(data.list)) {
+		            var weatherList = $('.weather-list');
+		            var dailyData = getDailyWeatherData(data.list);
+		            var firstDayWeather = dailyData[0];
+		
+		            var temperature = firstDayWeather.main.temp.toFixed(0) + " °C";
+		            var weatherCode = firstDayWeather.weather[0].id;
+		            var weatherIcon = firstDayWeather.weather[0].icon;
+		            var weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+		            var koreanWeatherDesc = getKoreanWeatherDescription(weatherCode);
+		            var weatherPrice = getWeatherPrice(weatherCode);
+		
+		            $(".wheather-text-price").text(weatherPrice);
+		            $(".temperature").text(temperature);
+		            $(".description").text(koreanWeatherDesc);
+		            $(".description-icon").attr("src", weatherIconAdrs);
+		
+		            dailyData.forEach(function(weatherData, index) {
+		                var temperature = weatherData.main.temp.toFixed(0) + " °C";
+		                var weatherCode = weatherData.weather[0].id;
+		                var weatherIcon = weatherData.weather[0].icon;
+		                var weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+		                var koreanWeatherDesc = getKoreanWeatherDescription(weatherCode);
+		                var date = new Date(weatherData.dt * 1000);
+		                var dateString = date.toLocaleDateString('ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+		                var weatherPrice = getWeatherPrice(weatherCode);
+		
+		                var listItem = $(`
+		                    <li class="weather-list-item">
+		                        <p><span class="date">${dateString}</span></p>
+		                        <p><span class="price">${weatherPrice}</span></p>
+		                        <p><span>${temperature}</span></p>
+		                        <p class="temperature-list"><img src="${weatherIconAdrs}" alt="weather-Icon"><span class="description-list">${koreanWeatherDesc}</span></p>
+		                    </li>
+		                `);
+		                weatherList.append(listItem);
+		
+						if(weatherData.main.temp.toFixed(0) >= 34){
+							$("price").text('높음')
+						}
+						
+		                if (weatherPrice == '높음') {
+		                    listItem.find(".price").addClass("good");
+		                }
+		            });
+		        } else {
+		            console.error("Data is not in the expected format.");
+		        }
+		    }
+		
+			// 하루의 첫 번째 날씨 데이터를 가져오는 함수
+			function getDailyWeatherData(weatherList) {
+			    var dailyData = [];
+			    var seenDates = new Set();
+			
+			    weatherList.forEach(function(weatherData) {
+			        var date = new Date(weatherData.dt * 1000).toISOString().split('T')[0];
+			        var hours = new Date(weatherData.dt * 1000).getHours();
+			
+			        // 하루의 첫 번째 데이터를 확인하고 추가 (09:00시 데이터만 선택)
+			        if (!seenDates.has(date) && hours === 9) {
+			            dailyData.push(weatherData);
+			            seenDates.add(date);
+			        }
+			    });
+			
+			    return dailyData;
+			}
+		
+		    // 날씨 한글 설명 반환 함수
+		    function getKoreanWeatherDescription(weatherCode) {
+		        var weatherDescObj = weatherDescKo.find(item => Object.keys(item)[0] == weatherCode);
+		        return weatherDescObj ? Object.values(weatherDescObj)[0] : '알 수 없음';
+		    }
+		
+		    // 날씨 가격 반환 함수
+		    function getWeatherPrice(weatherCode) {
+		        var weatherDescObj = weatherDescKo.find(item => Object.keys(item)[0] == weatherCode);
+		        return weatherDescObj ? weatherDescObj.price : '알 수 없음';
+		    }
+		
+		    // 미세먼지 정보 표시
+		    function getAirPollutionLevel(airQualityIndex) {
+		        var airPollutionLevel = '';
+		
+		        switch(airQualityIndex) {
+		            case 1:
+		                airPollutionLevel = '/images/code_1.png';
+		                break;
+		            case 2:
+		                airPollutionLevel = '/images/code_2.png';
+		                break;
+		            case 3:
+		                airPollutionLevel = '/images/code_3.png';
+		                break;
+		            case 4:
+		                airPollutionLevel = '/images/code_4.png';
+		                break;
+		            case 5:
+		                airPollutionLevel = '/images/code_5.png';
+		                break;
+		            default:
+		                airPollutionLevel = '';
+		        }
+		
+		        var imgElement = $('<img class="air-pollution-icon">').attr('src', airPollutionLevel);
+		        $('.air-pollution').empty().append(imgElement);
+		    }
+		</script>
+	</head>
+	<body>
+		<th:block layout:fragment="content">
+			<div class="content">
+				<div class="wheather-wrapper">
+					<div class="wheather-area">
+						<span class="wheather-area-text">접속지역</span>
+						<p class="place"></p>
+					</div>
+					<div class="wheather-content">
+						<div class="wheather-date-wrapper">
+							<p class="wheather-date"></p>
+						</div>
+						<div class="wheather-content-inner">
+							<p class="wheather-text">단가 예상 : <span class="wheather-text-price"></span></p>
+							<div class="description-icon-wrapper">
+								<img src="" class="description-icon">
+							</div>
+							<p class="description"></p>
+							<p class="temperature"></p>
+							<div class="air-wrapper">
+								<p class="micro">미세먼지</p>
+								<div class="air-pollution"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="main-wrapper">
+					<div class="main-header">
+						<p class="w-25">일자</p>
+						<p class="w-25">예상 단가</p>
+						<p class="w-25">온도</p>
+						<p class="w-25">날씨</p>
+					</div>
+					<div class="weather-container">
+						<ul class="weather-list"></ul>
+					</div>
+				</div>
+			</div>	
+		</th:block> 
+	</body>
+</html>
