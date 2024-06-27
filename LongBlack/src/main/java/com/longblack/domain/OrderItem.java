@@ -28,10 +28,10 @@ import lombok.ToString;
 public class OrderItem {
 	
 	@Id	@Column(name="order_item_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderItemId;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "orders_id")
     private Order order;
 
     @ManyToOne

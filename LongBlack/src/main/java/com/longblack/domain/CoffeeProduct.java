@@ -31,7 +31,7 @@ import lombok.ToString;
 public class CoffeeProduct {
 	
 	 	@Id @Column(name="product_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private Long productId;
+	    private Long id;
 
 	 	@ManyToOne
 	 	@JoinColumn(name = "store_id")

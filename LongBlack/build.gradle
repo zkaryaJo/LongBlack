@@ -38,13 +38,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-data-rest' //rest API 자동완성
-	
 	//tomcat -> undertow
 	implementation ('org.springframework.boot:spring-boot-starter-web') {
 		exclude module: 'spring-boot-starter-tomcat'
 	}
 	implementation 'org.springframework.boot:spring-boot-starter-undertow'
+	implementation ('org.springframework.boot:spring-boot-starter-data-rest'){ //rest API 자동완성
+		exclude module: 'spring-boot-starter-tomcat'
+	}
 	
 	//jpa history 테이블 자동생성 
 	implementation 'org.springframework.data:spring-data-envers'

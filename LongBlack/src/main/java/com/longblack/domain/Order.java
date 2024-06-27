@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.envers.Audited;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -30,11 +31,11 @@ import lombok.ToString;
 @Entity
 @Audited
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
-@Table(name = "ORDER")
+@Table(name = "ORDERS")
 public class Order {
 	
- 	@Id @Column(name="order_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+ 	@Id @Column(name="orders_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -48,6 +49,4 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
-
-
 }

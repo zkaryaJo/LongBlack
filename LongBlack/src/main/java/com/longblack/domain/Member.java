@@ -3,17 +3,22 @@ package com.longblack.domain;
 import java.util.List;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.longblack.config.Role;
 import com.longblack.dto.MemberDto;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,6 +48,8 @@ public class Member  {
 	private String email;
 	
 	private String name;
+	
+	@JsonIgnore
 	private String password;
 	private String address;
     private String phone;

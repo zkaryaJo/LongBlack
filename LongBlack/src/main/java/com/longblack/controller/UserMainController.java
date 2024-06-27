@@ -90,6 +90,7 @@ public class UserMainController {
  			response.addCookie(cookie);
  			
  			map.put("result", "success");
+ 			map.put("token", token);
  			return map;
 		}
 		
