@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.hibernate.envers.Audited;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +37,7 @@ public class CoffeeProduct {
 	    private Long id;
 
 	 	@ManyToOne
+	 	@JsonBackReference
 	 	@JoinColumn(name = "store_id")
 	 	private Store store;
 
@@ -42,10 +46,12 @@ public class CoffeeProduct {
 	    private double price;
 	    private int stock;
 
-	    @OneToMany(mappedBy = "coffeeProduct")
+	    @OneToMany(mappedBy = "coffeeProduct" , cascade = CascadeType.ALL)
+	    @JsonManagedReference
 	    private List<OrderItem> orderItems;
 
-	    @OneToMany(mappedBy = "coffeeProduct")
+	    @OneToMany(mappedBy = "coffeeProduct" , cascade = CascadeType.ALL)
+	    @JsonManagedReference
 	    private List<Review> reviews;
 
 }

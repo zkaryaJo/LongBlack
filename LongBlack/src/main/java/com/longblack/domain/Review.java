@@ -37,10 +37,12 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
+    @JsonBackReference
     private Member member;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private CoffeeProduct coffeeProduct;
 
     private int rating;

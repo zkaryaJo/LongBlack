@@ -44,12 +44,11 @@ public class WebSecurityConfig {
 
 		http
 			.authorizeHttpRequests((auth) -> auth
-					.requestMatchers("/api/**").authenticated()
 					.requestMatchers("/", "/user/login", "/user/authenticate", "/member/checkMail", "/member/signup").permitAll()
 					.requestMatchers( "/css/**", "/js/**", "/images/**").permitAll() 
 					.requestMatchers("/h2-console/**").permitAll() // h2-console
 					.requestMatchers("/longblack/**").permitAll() // swagger
-					.requestMatchers("/error").permitAll()	//error 발생 시 security에서 /error 페이지로 보내며 403 forbidden 이 뜸 
+					.requestMatchers("/error", "/robots.txt", "/Robots.txt", "ads.txt", "Ads.txt").permitAll()	//error 발생 시 security에서 /error 페이지로 보내며 403 forbidden 이 뜸 
 				.anyRequest().authenticated()
 			)
 			.formLogin(form -> form

@@ -5,7 +5,9 @@ import java.util.List;
 import org.hibernate.envers.Audited;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,8 +37,8 @@ public class Store {
     private String address;
     private String phone;
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     private List<CoffeeProduct> coffeeProducts;
 
-    // Getters and Setters
 }

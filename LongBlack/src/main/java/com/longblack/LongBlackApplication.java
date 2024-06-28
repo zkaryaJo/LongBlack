@@ -1,6 +1,7 @@
 package com.longblack;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
@@ -13,13 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.longblack.config.Role;
 import com.longblack.domain.CoffeeProduct;
-import com.longblack.domain.Order;
 import com.longblack.domain.Member;
+import com.longblack.domain.Order;
 import com.longblack.domain.OrderItem;
 import com.longblack.domain.Store;
 import com.longblack.repository.CoffeeProductRepository;
 import com.longblack.repository.MemberRepository;
-import com.longblack.repository.OrderItemRepository;
 import com.longblack.repository.OrderRepository;
 import com.longblack.repository.StoreRepository;
 
@@ -34,7 +34,6 @@ public class LongBlackApplication {
 	@Bean
     public CommandLineRunner dataLoader(MemberRepository memberRepository, 
     									OrderRepository customOrderRepository, 
-    									OrderItemRepository orderItemRepository,  
     									StoreRepository storeRepository, 
     									CoffeeProductRepository coffeeProductRepository, 
     									BCryptPasswordEncoder passwordEncoder) {
@@ -61,7 +60,6 @@ public class LongBlackApplication {
 						.price(coffeeProduct.getPrice()*2)
 						.quantity(2)
 						.build();
-				orderItemRepository.save(orderItem);
 				
 				List<OrderItem> list = new ArrayList<>();
 				list.add(orderItem);
@@ -71,18 +69,29 @@ public class LongBlackApplication {
 						.totalAmount(100)
 						.orderItems(list)
 						.member(member)
+						.orderDate(new Date())
 						.build();
 				
 				customOrderRepository.save(customOrder);
 			}
 			
+			private void createStores() {
+				
+				Store store = Store.builder()
+						.name("롱블랙 테스트점")
+						.phone("010-1111-2222")
+						.address("서울시 어쩌구 저쩌구")
+						.build();
+				
+				storeRepository.save(store);
+			}
+			
 			private void createCoffeeProduct() {
 				
 				Store store = storeRepository.findById(1L).orElseThrow();
-				
 				CoffeeProduct coffeeProduct1 = CoffeeProduct.builder()
-						.store(store)
 						.name("롱블랙")
+						.store(store)
 						.price(1500)
 						.stock(100)
 						.description("롱블랙-설명")
@@ -112,16 +121,6 @@ public class LongBlackApplication {
 				coffeeProductRepository.saveAll(list);
 			}
 			
-			private void createStores() {
-				
-				Store store = Store.builder()
-						.name("롱블랙 테스트점")
-						.phone("010-1111-2222")
-						.address("서울시 어쩌구 저쩌구")
-						.build();
-				
-				storeRepository.save(store);
-			}
 			
 			private void createMember() {
 				Member member = Member.builder()

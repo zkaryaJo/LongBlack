@@ -2,6 +2,7 @@ package com.longblack.domain;
 
 import org.hibernate.envers.Audited;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -32,10 +33,12 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "orders_id")
+    @JsonBackReference
     private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private CoffeeProduct coffeeProduct;
 
     private int quantity;

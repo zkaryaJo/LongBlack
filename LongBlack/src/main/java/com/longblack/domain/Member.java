@@ -57,10 +57,12 @@ public class Member  {
     @Enumerated(EnumType.STRING)
     private Role role;
     
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" , cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" , cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Review> reviews;
 
 	

@@ -40,8 +40,8 @@ public class UserMainController {
 	private final JWTUtil jwtUtil;
 	
 	@GetMapping("/")
-    public String redirectToNewsList() {
-        return "redirect:/user/login";
+    public String main() {
+        return "index";
     }
 	
 	/**
