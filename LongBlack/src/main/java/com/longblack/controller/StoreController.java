@@ -1,5 +1,6 @@
 package com.longblack.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.longblack.config.CustomUserDetails;
+import com.longblack.domain.Member;
 import com.longblack.domain.Store;
+import com.longblack.service.MemberService;
 import com.longblack.service.StoreService;
 
 import jakarta.transaction.Transactional;
@@ -21,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class StoreController {
 
     private final StoreService storeService;
+    private final MemberService memberService;
 
     @GetMapping
     public String getAllStores(Model model) {
@@ -38,8 +43,9 @@ public class StoreController {
 
     @PostMapping("/save")
     @Transactional
-    public String saveStore(@ModelAttribute Store store) {
-        storeService.createStore(store);
+    public String saveStore(@ModelAttribute Store store, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    	Member member = memberService.findByEmail(userDetails.getName());
+        storeService.createStore(store, member);
         return "redirect:/store";
     }
 

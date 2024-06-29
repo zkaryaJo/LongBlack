@@ -2,7 +2,12 @@ package com.longblack.controller;
 
 import com.longblack.dto.OrderDto;
 import com.longblack.domain.Order;
+import com.longblack.service.MemberService;
 import com.longblack.service.OrderService;
+import com.longblack.service.StoreService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +17,10 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/orders")
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @GetMapping
     public String getAllOrders(Model model) {

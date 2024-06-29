@@ -46,7 +46,7 @@ public class OrderService {
                 .map(item -> {
                     OrderItemDto itemDto = new OrderItemDto();
                     itemDto.setId(item.getId());
-                    itemDto.setProductName(item.getCoffeeProduct().getName());
+                    itemDto.setProductName(item.getProduct().getName());
                     itemDto.setQuantity(item.getQuantity());
                     itemDto.setPrice(item.getPrice());
                     return itemDto;

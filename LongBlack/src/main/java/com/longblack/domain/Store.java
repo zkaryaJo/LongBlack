@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.envers.Audited;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -13,7 +14,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,9 +39,14 @@ public class Store {
     private String name;
     private String address;
     private String phone;
+    
+    @OneToOne
+    @JoinColumn(name = "owner_id")
+    @JsonBackReference
+    private Member owner;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     @JsonManagedReference
-    private List<CoffeeProduct> coffeeProducts;
+    private List<Product> products;
 
 }

@@ -25,6 +25,8 @@ public class MemberDto {
 		private String name;
 		@NotBlank(message = "사용자 비밀번호는 필수값입니다.")
 		private String password;
+		
+		private String role;
 	}
 	
 	@Getter @ToString

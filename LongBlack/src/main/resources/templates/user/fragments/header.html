@@ -3,17 +3,49 @@
 <th:block th:fragment="header">
 	<nav class="navbar navbar-expand-lg navbar-dark desktop-nav">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="/"> <img class="logo" th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
+			<a class="navbar-brand" href="/"> <img class="logo"
+				th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
 			</a>
 			<ul class="nav nav-underline nav-underline-center">
-				<li class="nav-item"><a class="nav-link" aria-current="page" href="/">홈</a></li>
-				<li class="nav-item"><a class="nav-link" href="/products">상품 목록</a></li>
-				<li class="nav-item"><a class="nav-link" href="/cart">장바구니</a></li>
-				<li class="nav-item"><a class="nav-link" href="/orders">주문 내역</a></li>
-				<li class="nav-item"><a class="nav-link" href="/store">상점</a></li>
-				<li class="nav-item"><a class="nav-link" href="/reviews">리뷰 관리</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">즐겨찾기</a></li>
-				<li class="nav-item"><a class="nav-link" href="/user/notice">주변 매장</a></li>
+			
+				<th:block sec:authorize="isAnonymous() or hasRole('ADMIN')">
+					<li class="nav-item"><a class="nav-link" href="/products">상품
+							목록</a></li>
+					<li class="nav-item"><a class="nav-link" href="/user/notice">주변
+							매장</a></li>
+					<li class="nav-item"><a class="nav-link" href="/cart">장바구니</a></li>
+				</th:block>
+				<!-- 사용자 메뉴 -->
+				<th:block sec:authorize="hasRole('CUSTOMER') or hasRole('ADMIN')">
+					<li class="nav-item"><a class="nav-link" href="/orders">주문
+							내역</a></li>
+					<li class="nav-item"><a class="nav-link" href="/reviews">리뷰
+							작성</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">즐겨찾기</a></li>
+				</th:block>
+
+
+				<!-- 관리자 메뉴 -->
+				<th:block sec:authorize="hasRole('ADMIN')">
+					<li class="nav-item"><a class="nav-link" href="/store">상점
+							관리</a></li>
+				</th:block>
+
+				<!-- 가게 사장님 메뉴 -->
+				<th:block sec:authorize="hasRole('OWNER') or hasRole('ADMIN')">
+					<li class="nav-item dropdown">
+						<button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">메뉴관리</button>
+						<ul class="dropdown-menu dropdown-menu-dark">
+							<li><a class="dropdown-item" href="/product">음료</a></li>
+							<li><a class="dropdown-item" href="/user/delivery">디저트</a></li>
+						</ul>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="/owner/orders">주문
+							관리</a></li>
+					<li class="nav-item"><a class="nav-link" href="/owner/reviews">리뷰
+							관리</a></li>
+					<li class="nav-item"><a class="nav-link" href="/owner/notice">공지사항</a></li>
+				</th:block>
 			</ul>
 
 			<th:block sec:authorize="isAnonymous()">
@@ -35,20 +67,24 @@
 		</div>
 	</nav>
 	<header class="mobile-header">
-		<a class="navbar-brand" href="/"> <img class="logo" th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
+		<a class="navbar-brand" href="/"> <img class="logo"
+			th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
 		</a>
 
 		<th:block sec:authorize="isAnonymous()">
-			<a href="/user/login" class="mobile-login-btn"> <img class="login-icon" th:src="@{/images/user.png}" alt="user">
+			<a href="/user/login" class="mobile-login-btn"> <img
+				class="login-icon" th:src="@{/images/user.png}" alt="user">
 				<p class="">로그인</p>
 			</a>
 		</th:block>
 
 		<th:block sec:authorize="isAuthenticated()">
 			<div class="mobile-header-auth">
-				<a href="/member/mypage" class="mobile-login-btn me-1"> <img class="login-icon" th:src="@{/images/user.png}" alt="user">
+				<a href="/member/mypage" class="mobile-login-btn me-1"> <img
+					class="login-icon" th:src="@{/images/user.png}" alt="user">
 					<p class="">마이페이지</p>
-				</a> <a href="/logout" class="mobile-login-btn"> <img class="login-icon" th:src="@{/images/user.png}" alt="user">
+				</a> <a href="/logout" class="mobile-login-btn"> <img
+					class="login-icon" th:src="@{/images/user.png}" alt="user">
 					<p class="">로그아웃</p>
 				</a>
 			</div>
@@ -82,7 +118,8 @@
 		<div class="mobile-side-inner">
 			<div class="mobile-side">
 				<div class="side-logo">
-					<a class="navbar-brand" href="/"> <img class="logo" th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
+					<a class="navbar-brand" href="/"> <img class="logo"
+						th:src="@{/images/logo_h.png}" alt="롱블랙스로고">
 					</a>
 				</div>
 				<th:block sec:authorize="isAuthenticated()">
@@ -100,14 +137,29 @@
 							<li class="side-content-list-item"><a href="/user/main">메인</a></li>
 							<li class="side-content-list-item"><a href="/">배달 뉴스</a></li>
 							<li class="side-content-list-item"><a href="/orders">주문내역</a></li>
-							<li class="side-content-list-item"><a href="/products">상품 목록</a></li>
+							<li class="side-content-list-item"><a href="/products">상품
+									목록</a></li>
 							<li class="side-content-list-item"><a href="/cart">장바구니</a></li>
-							<li class="side-content-list-item"><a href="/store">상점</a></li>
-							<li class="side-content-list-item"><a href="/reviews">리뷰 관리</a></li>
-							<li class="side-content-list-item"><a href="/user/pickup">악성 픽업지</a></li>
-							<li class="side-content-list-item"><a href="/user/delivery">악성 전달지</a></li>
-							<li class="side-content-list-item"><a href="/user/notice">배달 정보영상</a></li>
-							<li class="side-content-list-item"><a href="#">즐겨찾기</a></li>
+
+							<!-- 사용자 메뉴 -->
+							<th:block sec:authorize="hasRole('CUSTOMER')">
+								<li class="side-content-list-item"><a href="/reviews">리뷰
+										관리</a></li>
+								<li class="side-content-list-item"><a href="#">즐겨찾기</a></li>
+								<li class="side-content-list-item"><a href="/user/notice">주변
+										매장</a></li>
+							</th:block>
+
+							<!-- 가게 사장님 메뉴 -->
+							<th:block sec:authorize="hasRole('OWNER')">
+								<li class="side-content-list-item"><a href="/store">상점
+										관리</a></li>
+								<li class="side-content-list-item"><a href="/owner/orders">주문
+										관리</a></li>
+								<li class="side-content-list-item"><a href="/owner/reviews">리뷰
+										관리</a></li>
+								<li class="side-content-list-item"><a href="/owner/notice">공지사항</a></li>
+							</th:block>
 						</ul>
 						<div class="side-community-box">
 							<ul class="side-community-content">

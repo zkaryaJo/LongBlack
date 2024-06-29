@@ -1,5 +1,7 @@
 package com.longblack.config;
 
 public enum Role {
-	USER,ADMIN
+	ROLE_CUSTOMER,
+	ROLE_OWNER,
+	ROLE_ADMIN
 }

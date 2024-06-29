@@ -1,18 +1,24 @@
 package com.longblack.service;
 
-import com.longblack.domain.Store;
-import com.longblack.repository.StoreRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.longblack.config.Role;
+import com.longblack.domain.Member;
+import com.longblack.domain.Store;
+import com.longblack.repository.StoreRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class StoreService {
 
-    @Autowired
-    private StoreRepository storeRepository;
+    private final StoreRepository storeRepository;
 
     public List<Store> getAllStores() {
         return storeRepository.findAll();
@@ -22,7 +28,12 @@ public class StoreService {
         return storeRepository.findById(id);
     }
 
-    public Store createStore(Store store) {
+    @Transactional
+    public Store createStore(Store store, Member member) {
+        if (member.getRole() != Role.ROLE_OWNER) {
+            throw new IllegalArgumentException("Only owners can create a store.");
+        }
+        store.setOwner(member);
         return storeRepository.save(store);
     }
 

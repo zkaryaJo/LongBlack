@@ -43,7 +43,7 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonBackReference
-    private CoffeeProduct coffeeProduct;
+    private Product product;
 
     private int rating;
     private String comment;

@@ -31,7 +31,7 @@ import lombok.ToString;
 @Audited
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Table(name = "COFFEE_PRODUCT")
-public class CoffeeProduct {
+public class Product {
 	
 	 	@Id @Column(name="product_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id;
@@ -41,16 +41,17 @@ public class CoffeeProduct {
 	 	@JoinColumn(name = "store_id")
 	 	private Store store;
 
+	 	private String category;
 	    private String name;
 	    private String description;
 	    private double price;
 	    private int stock;
 
-	    @OneToMany(mappedBy = "coffeeProduct" , cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL)
 	    @JsonManagedReference
 	    private List<OrderItem> orderItems;
 
-	    @OneToMany(mappedBy = "coffeeProduct" , cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL)
 	    @JsonManagedReference
 	    private List<Review> reviews;
 

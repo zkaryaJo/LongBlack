@@ -1,290 +1,352 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-	<th:block th:replace="~{user/fragments/config::config}"></th:block>
-	<script>
-		$(document).ready(function() {
-			
-			$('#modalSignup').on('shown.bs.modal', function () {
-			    $('#floatingInput').val('');
-			    $('#floatingAuthNum').val('');
-			    $('#checkAuth').val('');
-			    $('#verifyAuth').val('');
-			    $('#floatingPassword').val('');
-			    $('#floatingPasswordCheck').val('');
-			    $('#floatingUserName').val('');
-			    $('#verifyUser').val('');
-			});
+<th:block th:replace="~{user/fragments/config::config}"></th:block>
+<script>
+	$(document)
+			.ready(
+					function() {
 
-			//인증번호 전송
-		    $('#authenticationButton').click(function(event) {
-		
-				event.preventDefault();
-				
-		        var email = $('#floatingInput').val();
-			
-				
-				// 이메일 유효성 검사
-				if (!validateEmail(email)) {
-					Swal.fire({
-				          icon: 'error',
-				          title: '이메일을 확인해 주세요.',
-				          showConfirmButton: false,
-				          timer: 1500
-				      });
-					return;
-				}
-				
-				loading();
-				
-		        $.ajax({
-		            type: 'POST',
-		            url: '/member/checkMail',
-		            contentType: 'application/json',
-		            data: JSON.stringify({'email': email }),
-		            success: function(response) {
-						loading(true);
-						if(response.result === 'success'){
+						$('#modalSignup').on('shown.bs.modal', function() {
+							$('#floatingInput').val('');
+							$('#floatingAuthNum').val('');
+							$('#checkAuth').val('');
+							$('#verifyAuth').val('');
+							$('#floatingPassword').val('');
+							$('#floatingPasswordCheck').val('');
+							$('#floatingUserName').val('');
+							$('#verifyUser').val('');
+						});
+
+						//인증번호 전송
+						$('#authenticationButton')
+								.click(
+										function(event) {
+
+											event.preventDefault();
+
+											var email = $('#floatingInput')
+													.val();
+
+											// 이메일 유효성 검사
+											if (!validateEmail(email)) {
+												Swal.fire({
+													icon : 'error',
+													title : '이메일을 확인해 주세요.',
+													showConfirmButton : false,
+													timer : 1500
+												});
+												return;
+											}
+
+											loading();
+
+											$
+													.ajax({
+														type : 'POST',
+														url : '/member/checkMail',
+														contentType : 'application/json',
+														data : JSON.stringify({
+															'email' : email
+														}),
+														success : function(
+																response) {
+															loading(true);
+															if (response.result === 'success') {
+																Swal
+																		.fire({
+																			icon : 'success',
+																			title : '이메일이 성공적으로 \n 발송되었습니다.',
+																			showConfirmButton : false,
+																			timer : 1500
+																		});
+																$(".auth")
+																		.append(
+																				'<input type="hidden" value="'+ response.Authkey +'" name="checkAuth" id="checkAuth">');
+																$(".auth")
+																		.removeClass(
+																				'hide');
+															} else if (response.result === "exist") {
+																Swal
+																		.fire({
+																			icon : 'error',
+																			title : '이미 가입된 이메일입니다.',
+																			showConfirmButton : false,
+																			timer : 1500
+																		});
+																$(
+																		"#floatingInput")
+																		.focus();
+															}
+														},
+														error : function(xhr,
+																status, error) {
+															console
+																	.error(
+																			'이메일 발송 중 오류가 발생했습니다:',
+																			error);
+														}
+													});
+										});
+
+						// 이메일 인증 확인
+						$("#checkAuthNum").click(function(event) {
+							event.preventDefault();
+
+							var enteredAuthNum = $('#floatingAuthNum').val();
+
+							var serverAuthKey = $('[name=checkAuth]').val();
+
+							if (enteredAuthNum === serverAuthKey) {
+								Swal.fire({
+									icon : 'success',
+									title : '인증에 성공했습니다.',
+									showConfirmButton : false,
+									timer : 1500
+								});
+								$(".auth").addClass('hide');
+								$("[name=verify_auth]").val('Y');
+								$("#sign-up").attr("disabled", false);
+							} else {
+								$("#floatingAuthNum").addClass("wrong");
+								Swal.fire({
+									icon : 'error',
+									title : '인증번호를 확인해 주세요.',
+									showConfirmButton : false,
+									timer : 1500
+								});
+							}
+						});
+
+						$('#floatingPassword')
+								.on(
+										'keyup',
+										function() {
+											var password = $(this).val();
+
+											var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+											if (!pattern.test(password)) {
+												$('.noti')
+														.text(
+																'비밀번호는 대문자, 소문자, 숫자 포함 8자리여야합니다.')
+											} else {
+												$('.noti').addClass('hide');
+											}
+										});
+
+						//비밀번호 확인하기
+						$('#floatingPasswordCheck').on('keyup', function() {
+							var password = $('#floatingPassword').val();
+							var confirmPassword = $(this).val();
+
+							if (password === confirmPassword) {
+								$(this).addClass("pass");
+								$(this).removeClass("wrong");
+							} else {
+								$(this).addClass("wrong");
+							}
+						});
+
+						var urlParams = new URLSearchParams(
+								window.location.search);
+						if (urlParams.has('sessionExpired')) {
 							Swal.fire({
-			                    icon: 'success',
-			                    title: '이메일이 성공적으로 \n 발송되었습니다.',
-			                    showConfirmButton: false,
-			                    timer: 1500
-			                });
-							$(".auth").append('<input type="hidden" value="'+ response.Authkey +'" name="checkAuth" id="checkAuth">');
-							$(".auth").removeClass('hide');
-						}else if (response.result === "exist") {
-							Swal.fire({
-			                    icon: 'error',
-			                    title: '이미 가입된 이메일입니다.',
-			                    showConfirmButton: false,
-			                    timer: 1500
-			                });
-							$("#floatingInput").focus();
+								icon : 'info',
+								title : '세션이 만료되었습니다. 로그인을 해주세요.',
+								showConfirmButton : false,
+								timer : 1500
+							});
 						}
-		            },
-		            error: function(xhr, status, error) {
-		                console.error('이메일 발송 중 오류가 발생했습니다:', error);
-		            }
-		        });
-		    });
-			
-			// 이메일 인증 확인
-			$("#checkAuthNum").click(function(event) {
-				event.preventDefault();
-				
-				var enteredAuthNum = $('#floatingAuthNum').val();
-						    
-			    var serverAuthKey = $('[name=checkAuth]').val();
-			
-			    if (enteredAuthNum === serverAuthKey) {
+					});
+
+	//이메일 유효성 체크
+	function validateEmail(email) {
+		var pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.(com|net|org)$/i;
+		if (pattern.test(email) === false) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	//회원 가입
+	function regist(event) {
+		event.preventDefault();
+
+		var formData = {
+			email : $('#floatingInput').val(),
+			password : $('#floatingPassword').val(),
+			name : $('#floatingUserName').val(),
+			role : $('#role').val()
+		// 역할 추가
+		};
+
+		$.ajax({
+			type : 'POST',
+			url : '/member/signup',
+			contentType : 'application/json',
+			data : JSON.stringify(formData),
+			success : function(response) {
+				if (response === "success") {
 					Swal.fire({
-	                    icon: 'success',
-	                    title: '인증에 성공했습니다.',
-	                    showConfirmButton:false,
-	                    timer: 1500
-	                });
-					$(".auth").addClass('hide');
-					$("[name=verify_auth]").val('Y');
-					$("#sign-up").attr("disabled", false);
-			    } else {
-					$("#floatingAuthNum").addClass("wrong");
+						icon : 'success',
+						title : '가입이 완료되었습니다.',
+						showConfirmButton : false,
+						timer : 1500
+					});
+					$("#modalSignup").modal('hide');
+				} else if (response === "mailExist") {
 					Swal.fire({
-				          icon: 'error',
-				          title: '인증번호를 확인해 주세요.',
-				          showConfirmButton: false,
-				          timer: 1500
-				      });
-			    }
-		    });
-			
-			$('#floatingPassword').on('keyup', function() {
-	            var password = $(this).val();
-	
-	            var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-	
-	            if (!pattern.test(password)) {
-	                $('.noti').text('비밀번호는 대문자, 소문자, 숫자 포함 8자리여야합니다.')
-	            }else{
-					$('.noti').addClass('hide');
+						icon : 'error',
+						title : '이미 가입된 이메일입니다.',
+						showConfirmButton : false,
+						timer : 1500
+					});
+					$("#floatingInput").focus();
 				}
-	        });
-			
-			//비밀번호 확인하기
-			$('#floatingPasswordCheck').on('keyup', function() {
-	           var password = $('#floatingPassword').val(); 
-	           var confirmPassword = $(this).val(); 
-	
-			   
-	           if (password === confirmPassword) {
-					$(this).addClass("pass");
-					$(this).removeClass("wrong");
-	           } else {
-					$(this).addClass("wrong");
-	           }
-	       });
-	
-			var urlParams = new URLSearchParams(window.location.search);
-		     if (urlParams.has('sessionExpired')) {
-		         Swal.fire({
-		             icon: 'info',
-		             title: '세션이 만료되었습니다. 로그인을 해주세요.',
-		             showConfirmButton: false,
-		             timer: 1500
-		         });
-		     }
+			},
+			error : function(xhr, status, error) {
+				alert('가입 중 오류가 발생했습니다');
+			}
 		});
-		
-		//이메일 유효성 체크
-		function validateEmail(email) {
-		    var pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.(com|net|org)$/i;
-			if (pattern.test(email) === false) {
-		       return false;
-		   } else {
-		       return true;
-		   }
+	}
+	function login() {
+		if ($('#email').val() == '' || $('#password').val() == '') {
+			Swal.fire({
+				icon : 'info',
+				title : '이메일 혹은 비밀번호를 확인해 주세요.',
+				showConfirmButton : false,
+				timer : 1500
+			});
+			return;
 		}
-		
-		//회원 가입
-		function regist(event) {
-		    event.preventDefault();
-		
-		    var formData = {
-		        email: $('#floatingInput').val(),
-		        password: $('#floatingPassword').val(),
-		        name: $('#floatingUserName').val()
-		    };
-		
-		    $.ajax({
-		        type: 'POST',
-		        url: '/member/signup',
-		        contentType: 'application/json', 
-		        data: JSON.stringify(formData),
-		        success: function(response) {
-		            if (response === "success") {
-		                Swal.fire({
-		                    icon: 'success',
-		                    title: '가입이 완료되었습니다.',
-		                    showConfirmButton: false,
-		                    timer: 1500
-		                });
-						$("#modalSignup").modal('hide');	
-		            } else if (response === "mailExist") {
-		                Swal.fire({
-		                    icon: 'error',
-		                    title: '이미 가입된 이메일입니다.',
-		                    showConfirmButton: false,
-		                    timer: 1500
-		                });
-						$("#floatingInput").focus();
-		            }
-		        },
-		        error: function(xhr, status, error) {
-		           alert('가입 중 오류가 발생했습니다');
-		        }
-		    });
-		}
-		function login() {
-		    if ($('#email').val() == '' || $('#password').val() == '') {
-		        Swal.fire({
-		            icon: 'info',
-		            title: '이메일 혹은 비밀번호를 확인해 주세요.',
-		            showConfirmButton: false,
-		            timer: 1500
-		        });
-		        return;
-		    }
-		
-		    var formData = {
-		        "email": $('#email').val(),
-		        "password": $('#password').val(),
-		        "rememberMe": $('#rememberMe').is(':checked')
-		    };
-		
-		    $.ajax({
-		        type: 'POST',
-		        url: '/user/authenticate',
-		        contentType: 'application/json', 
-		        data: JSON.stringify(formData),
-		        success: function(response) {
-					window.location.href = '/user/main'
-		        },
-		        error: function(xhr, status, error) {
-		            alert('로그인 중 오류가 발생했습니다');
-		        }
-		    });
-		}
-	</script>
+
+		var formData = {
+			"email" : $('#email').val(),
+			"password" : $('#password').val(),
+			"rememberMe" : $('#rememberMe').is(':checked')
+		};
+
+		$.ajax({
+			type : 'POST',
+			url : '/user/authenticate',
+			contentType : 'application/json',
+			data : JSON.stringify(formData),
+			success : function(response) {
+				window.location.href = '/user/main'
+			},
+			error : function(xhr, status, error) {
+				alert('로그인 중 오류가 발생했습니다');
+			}
+		});
+	}
+</script>
 
 </head>
-	<body>
-	    <th:block layout:fragment="content">
-			<div class="content">
-				<div class="login-wrapper">
-					<div class="login-text-wrapper">
-						<p class="login-text-top">커피 주문</p>
-						<p class="login-text-bottom">LongBlack</p>
-					</div>
-					<div class="p-5">
-				        <form id="login">
-				          <div class="form-floating mb-3" style="display: flex; align-items: center; justify-content: space-between;">
-				            <input type="email" class="form-control rounded-3" placeholder="이메일 주소를 입력해주세요." id="email">
-				            <label for="floatingInput">E-mail</label>
-				          </div>
-				          <div class="form-floating mb-3">
-				            <input type="password" class="form-control rounded-3" placeholder="패스워드를 입력해주세요." id="password">
-				            <label for="floatingPassword">Password</label>
-				          </div>
+<body>
+	<th:block layout:fragment="content">
+		<div class="content">
+			<div class="login-wrapper">
+				<div class="login-text-wrapper">
+					<p class="login-text-top">커피 주문</p>
+					<p class="login-text-bottom">LongBlack</p>
+				</div>
+				<div class="p-5">
+					<form id="login">
+						<div class="form-floating mb-3"
+							style="display: flex; align-items: center; justify-content: space-between;">
+							<input type="email" class="form-control rounded-3"
+								placeholder="이메일 주소를 입력해주세요." id="email"> <label
+								for="floatingInput">E-mail</label>
+						</div>
+						<div class="form-floating mb-3">
+							<input type="password" class="form-control rounded-3"
+								placeholder="패스워드를 입력해주세요." id="password"> <label
+								for="floatingPassword">Password</label>
+						</div>
 						<!--  <div class="remember-wrapper">
 							<input type="checkbox" id="rememberMe" name="rememberMe"class="auto-login"/>
 							<label for="rememberMe">자동로그인</label>
 						  </div>-->
-						  <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="button" onclick="login();">로그인</button>
-						  <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="button" data-bs-toggle="modal" data-bs-target="#modalSignup">회원가입</button>
-				        </form>
-				    </div>
-				</div>
-				<div class="modal fade" id="modalSignup" tabindex="-1" aria-labelledby="modalSignupLabel" aria-hidden="true">
-				  <div class="modal-dialog modal-width sign-up-modal">
-				    <div class="modal-content rounded-4 shadow">
-				      <div class="modal-header">
-				        <h1 class="modal-title fs-5" id="modalSignupLabel">회원가입</h1>
-				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				      </div>
-				      <div class="modal-body p-3">
-				  		<form id="member-sign-up">
-				          <div class="form-floating mb-3" style="display: flex; align-items: center; justify-content: space-between;">
-				            <input type="email" class="form-control rounded-3 sign-up-input" id="floatingInput" placeholder="이메일 주소를 입력해주세요.">
-				            <label for="floatingInput">E-mail</label>
-							<button class="btn btn-secondary sign-up-btn" id="authenticationButton">인증</button>
-				          </div>
-						  <div class="form-floating mb-3 hide auth" style="display: flex; align-items: center; justify-content: space-between;">
-	  			            <input type="text" class="form-control rounded-3 sign-up-input" id="floatingAuthNum" placeholder="인증번호를 입력해 주세요.">
-	  			            <label for="floatingAuthNum">인증번호</label>
-							<input type="hidden" name="verify_auth" value="" id="verifyAuth"/>
-							<button class="btn btn-secondary sign-up-btn" id="checkAuthNum">확인</button>
-	  			          </div>
-				          <div class="form-floating mb-3">
-				            <input type="password" class="form-control rounded-3 sign-up-input" id="floatingPassword" placeholder="패스워드를 입력해주세요.">
-				            <label for="floatingPassword">Password</label>
-				          </div>
-						  <p class="noti"></p>
-						  <div class="form-floating mb-3">
-	  			            <input type="password" class="form-control rounded-3 sign-up-input" id="floatingPasswordCheck" placeholder="다시 패스워드를 입력해주세요." style="padding-left: 146px !important;">
-	  			            <label for="floatingPasswordCheck">Password Check</label>
-	  			          </div>
-						  <div class="form-floating mb-3" style="display: flex; align-items: center; justify-content: space-between;">
-			  	            <input type="text" class="form-control rounded-3 sign-up-input" id="floatingUserName" placeholder="사용하실 닉네임을 입력해주세요. ">
-			  	            <label for="floatingUserName">User Name</label>
-							<input type="hidden" name="verify_user" value="" id="verifyUser"/>
-			  	          </div>
-						  <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" id="sign-up" disabled onclick="regist(event);">가입완료</button>
-				        </form>
-				      </div>
-				    </div>
-				  </div>
+						<button
+							class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3"
+							type="button" onclick="login();">로그인</button>
+						<button
+							class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3"
+							type="button" data-bs-toggle="modal"
+							data-bs-target="#modalSignup">회원가입</button>
+					</form>
 				</div>
 			</div>
-	    </th:block>
-	</body>
+			<div class="modal fade" id="modalSignup" tabindex="-1"
+				aria-labelledby="modalSignupLabel" aria-hidden="true">
+				<div class="modal-dialog modal-width sign-up-modal">
+					<div class="modal-content rounded-4 shadow">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="modalSignupLabel">회원가입</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div class="modal-body p-3">
+							<form id="member-sign-up">
+								<div class="form-floating mb-3"
+									style="display: flex; align-items: center; justify-content: space-between;">
+									<input type="email"
+										class="form-control rounded-3 sign-up-input"
+										id="floatingInput" placeholder="이메일 주소를 입력해주세요."> <label
+										for="floatingInput">E-mail</label>
+									<button class="btn btn-secondary sign-up-btn"
+										id="authenticationButton">인증</button>
+								</div>
+								<div class="form-floating mb-3 hide auth"
+									style="display: flex; align-items: center; justify-content: space-between;">
+									<input type="text" class="form-control rounded-3 sign-up-input"
+										id="floatingAuthNum" placeholder="인증번호를 입력해 주세요."> <label
+										for="floatingAuthNum">인증번호</label> <input type="hidden"
+										name="verify_auth" value="" id="verifyAuth" />
+									<button class="btn btn-secondary sign-up-btn" id="checkAuthNum">확인</button>
+								</div>
+								<div class="form-floating mb-3">
+									<input type="password"
+										class="form-control rounded-3 sign-up-input"
+										id="floatingPassword" placeholder="패스워드를 입력해주세요."> <label
+										for="floatingPassword">Password</label>
+								</div>
+								<p class="noti"></p>
+								<div class="form-floating mb-3">
+									<input type="password"
+										class="form-control rounded-3 sign-up-input"
+										id="floatingPasswordCheck" placeholder="다시 패스워드를 입력해주세요."
+										style="padding-left: 146px !important;"> <label
+										for="floatingPasswordCheck">Password Check</label>
+								</div>
+								<!-- Role 선택 추가 -->
+								<div class="form-floating mb-3">
+									<select class="form-control rounded-3 sign-up-input" id="role"
+										required>
+										<option value="" disabled selected>가입 구분</option>
+										<option value="ROLE_OWNER">카페 사장</option>
+										<option value="ROLE_CUSTOMER">사용자</option>
+									</select> <label for="role">가입 구분값</label>
+								</div>
+								<div class="form-floating mb-3"
+									style="display: flex; align-items: center; justify-content: space-between;">
+									<input type="text" class="form-control rounded-3 sign-up-input"
+										id="floatingUserName" placeholder="사용하실 닉네임을 입력해주세요. ">
+									<label for="floatingUserName">User Name</label> <input
+										type="hidden" name="verify_user" value="" id="verifyUser" />
+								</div>
+								<button
+									class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3"
+									id="sign-up" disabled onclick="regist(event);">가입완료</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</th:block>
+</body>
 </html>

@@ -3,10 +3,10 @@ package com.longblack.domain;
 import java.util.List;
 
 import org.hibernate.envers.Audited;
-import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -18,11 +18,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,6 +64,10 @@ public class Member  {
     @OneToMany(mappedBy = "member" , cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Review> reviews;
+    
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Store store;
 
 	
 	public static Member toEntity(MemberDto.SignUp signUpDto, PasswordEncoder passwordEncoder, AesBytesEncryptor aesBytesEncryptor) {
@@ -72,7 +76,7 @@ public class Member  {
 				.email(signUpDto.getEmail())
 				.password(passwordEncoder.encode(signUpDto.getPassword()))
 				.name(signUpDto.getName())
-				.role(Role.USER)
+				.role(Role.valueOf(signUpDto.getRole()))
 				.build();
 	}
 }

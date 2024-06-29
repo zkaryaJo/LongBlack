@@ -16,8 +16,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: longblack.help
-    password: tktrcxgygwrmugdi
+    username: longblacks.help
+    password: xgvimlwrxuqgxqro
     properties:
       mail:
         smtp:

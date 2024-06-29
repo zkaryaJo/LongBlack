@@ -39,7 +39,7 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonBackReference
-    private CoffeeProduct coffeeProduct;
+    private Product product;
 
     private int quantity;
     private double price;
