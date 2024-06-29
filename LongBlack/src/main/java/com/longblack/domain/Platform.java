@@ -14,9 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,31 +28,19 @@ import lombok.ToString;
 @Entity
 @Audited
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
-@Table(name = "STORE")
-public class Store {
+@Table(name = "PLATFORM")
+public class Platform {
 	
-    @Id @Column(name="store_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @Column(name="platform_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
-    private String address;
-    private String phone;
-    private String instagram;
-    private String facebook;
-    private String blog;
-    private String youtube;
+//    private String address;
+//    private String phone;
     
-    @OneToOne
-    @JoinColumn(name = "owner_id")
+    @OneToMany(mappedBy = "platform", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     @JsonBackReference
-    private Member owner;
-
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-    @JsonManagedReference
-    private List<Product> products;
-    
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-    @JsonManagedReference
     private List<StorePlatform> storePlatforms;
 
 }

@@ -13,14 +13,18 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.longblack.config.Role;
-import com.longblack.domain.Product;
 import com.longblack.domain.Member;
 import com.longblack.domain.Order;
 import com.longblack.domain.OrderItem;
+import com.longblack.domain.Platform;
+import com.longblack.domain.Product;
 import com.longblack.domain.Store;
-import com.longblack.repository.ProductRepository;
+import com.longblack.domain.StorePlatform;
 import com.longblack.repository.MemberRepository;
 import com.longblack.repository.OrderRepository;
+import com.longblack.repository.PlatformRepository;
+import com.longblack.repository.ProductRepository;
+import com.longblack.repository.StorePlatformRepository;
 import com.longblack.repository.StoreRepository;
 
 @EnableJpaRepositories(repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
@@ -35,18 +39,58 @@ public class LongBlackApplication {
     public CommandLineRunner dataLoader(MemberRepository memberRepository, 
     									OrderRepository customOrderRepository, 
     									StoreRepository storeRepository, 
+    									StorePlatformRepository storePlatformRepository,
     									ProductRepository productRepository, 
+    									PlatformRepository platformRepository,
     									BCryptPasswordEncoder passwordEncoder) {
         return new CommandLineRunner() {
 
 			@Override
 			public void run(String... args) throws Exception {
-				
 				this.createMember();
+				this.createPlatform();
 				this.createStores();
+				this.createStorePlatform();
 				this.createProduct();
 				this.createOrder();
+			}
+			
+			private void createStorePlatform() {
 				
+				Store store = storeRepository.findById(1L).orElseThrow();
+				List<Platform> platforms = platformRepository.findAll();
+				
+				for(Platform p : platforms) {
+					StorePlatform sp = StorePlatform.builder()
+							.store(store)
+							.platform(p)
+							.useYn("Y")
+							.build();
+					storePlatformRepository.save(sp);
+				}
+				
+			}
+			
+			private void createPlatform() {
+				Platform platform1 = Platform.builder()
+						.name("배달의민족")
+						.build();
+				Platform platform2 = Platform.builder()
+						.name("쿠팡이츠")
+						.build();
+				Platform platform3 = Platform.builder()
+						.name("요기요")
+						.build();
+				Platform platform4 = Platform.builder()
+						.name("일반대행")
+						.build();
+				
+				List<Platform> list = new ArrayList<>();
+				list.add(platform1);
+				list.add(platform2);
+				list.add(platform3);
+				list.add(platform4);
+				platformRepository.saveAll(list);
 			}
 			
 			private void createOrder() {
