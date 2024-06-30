@@ -34,8 +34,8 @@ public class ProductController {
     public String getAllProducts(Model model, @AuthenticationPrincipal CustomUserDetails user) {
     	
     	Member member = memberService.findByEmail(user.getUsername());
-    	model.addAttribute("products", productService.findByStore(member.getStore()));
-    	model.addAttribute("store", member.getStore());
+    	model.addAttribute("products", productService.findByStore(member.getStores().get(0)));
+    	model.addAttribute("store", member.getStores().get(0));
         model.addAttribute("product", new Product()); // 모달에서 사용할 빈 Product 객체
         return "user/product";
     }
@@ -47,7 +47,7 @@ public class ProductController {
     	
     	Map map = new HashMap<>();
     	Member member = memberService.findByEmail(user.getUsername());
-    	map.put("store", member.getStore());
+    	map.put("store", member.getStores());
     	map.put("product", productService.getProductById(id).orElseThrow(() -> new RuntimeException("Product not found")));
     	
         return map;

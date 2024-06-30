@@ -36,6 +36,12 @@ body {
 	font-weight: 300;
 }
 
+.map {
+	margin: auto;
+	max-width: 800px;
+	height: 30%;
+}
+
 html, body, input, select, textarea {
 	font-family: 'Apple SD Gothic Neo', arial, sans-serif
 }

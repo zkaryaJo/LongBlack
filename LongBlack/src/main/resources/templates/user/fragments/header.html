@@ -16,8 +16,9 @@
 				<!-- 사용자 메뉴 -->
 				<th:block sec:authorize="hasRole('CUSTOMER') or hasRole('ADMIN')">
 					<li class="nav-item"><a class="nav-link" href="/orders">주문내역</a></li>
-					<li class="nav-item"><a class="nav-link" href="/reviews">리뷰작성</a></li>
 					<li class="nav-item"><a class="nav-link" href="#">즐겨찾기</a></li>
+					<li class="nav-item"><a class="nav-link" href="/user/notice">주변매장</a></li>
+					<li class="nav-item"><a class="nav-link" href="/reviews">리뷰작성</a></li>
 				</th:block>
 
 
@@ -117,6 +118,10 @@
 				<div class="dock-bar-item-icon conversation"></div>
 				<p>리뷰관리</p>
 			</a>
+			<a href="/store" class="dock-bar-item">
+				<div class="dock-bar-item-icon building-store"></div>
+				<p>상점관리</p>
+			</a>
 			<a href="/product" class="dock-bar-item">
 				<div class="dock-bar-item-icon book-open"></div>
 				<p>메뉴관리</p>
@@ -143,14 +148,6 @@
 			</a>
 		</th:block>
 		
-		<!-- 관리자 메뉴 -->
-		<th:block sec:authorize="hasRole('ADMIN')">
-			<a href="/store" class="dock-bar-item">
-				<div class="dock-bar-item-icon building-store"></div>
-				<p>상점관리</p>
-			</a>
-		</th:block>
-			
 			<a href="javascript:void(0);" class="dock-bar-item" id="more-menu">
 				<div class="dock-bar-item-icon more"></div>
 				<p>전체</p>
@@ -183,20 +180,18 @@
 							<li class="side-content-list-item"><a href="/user/notice">주변매장</a></li>
 							<li class="side-content-list-item"><a href="/cart">장바구니</a></li>
 						</th:block>
+						
 						<!-- 사용자 메뉴 -->
 						<th:block sec:authorize="hasRole('CUSTOMER') or hasRole('ADMIN')">
 							<li class="side-content-list-item"><a href="/orders">주문내역</a></li>
-							<li class="side-content-list-item"><a href="/reviews">리뷰작성</a></li>
+							<li class="side-content-list-item"><a href="/user/notice">주변매장</a></li>
 							<li class="side-content-list-item"><a href="#">즐겨찾기</a></li>
-						</th:block>
-		
-						<!-- 관리자 메뉴 -->
-						<th:block sec:authorize="hasRole('ADMIN')">
-							<li class="side-content-list-item"><a href="/store">상점관리</a></li>
+							<li class="side-content-list-item"><a href="/reviews">리뷰작성</a></li>
 						</th:block>
 		
 						<!-- 가게 사장님 메뉴 -->
 						<th:block sec:authorize="hasRole('OWNER') or hasRole('ADMIN')">
+							<li class="side-content-list-item"><a href="/store">상점관리</a></li>
 							<li class="side-content-list-item"><a href="/product">메뉴관리</a></li>
 							<li class="side-content-list-item"><a href="/owner/orders">주문관리</a></li>
 							<li class="side-content-list-item"><a href="/owner/reviews">리뷰관리</a></li>

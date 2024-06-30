@@ -65,9 +65,9 @@ public class Member  {
     @JsonManagedReference
     private List<Review> reviews;
     
-    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Store store;
+    private List<Store> stores;
 
 	
 	public static Member toEntity(MemberDto.SignUp signUpDto, PasswordEncoder passwordEncoder, AesBytesEncryptor aesBytesEncryptor) {
