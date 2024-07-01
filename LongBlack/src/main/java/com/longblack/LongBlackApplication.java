@@ -174,8 +174,8 @@ public class LongBlackApplication {
 			
 			private void createMember() {
 				Member customer = Member.builder()
-						.email("customer@naver.com")
-						.password(passwordEncoder.encode("zxcv0123!A"))
+						.email("customer")
+						.password(passwordEncoder.encode("1"))
 						.name("customer")
 						.address("서울특별시 금천구 가산로 99 110동 XXX호")
 						.phone("010-111-2222")
@@ -183,8 +183,8 @@ public class LongBlackApplication {
 						.build();
 				
 				Member owner = Member.builder()
-						.email("owner@naver.com")
-						.password(passwordEncoder.encode("zxcv0123!A"))
+						.email("owner")
+						.password(passwordEncoder.encode("1"))
 						.name("owner")
 						.address("서울특별시 금천구 가산로 99 110동 XXX호")
 						.phone("010-111-2222")
@@ -192,8 +192,8 @@ public class LongBlackApplication {
 						.build();
 				
 				Member admin = Member.builder()
-						.email("admin@naver.com")
-						.password(passwordEncoder.encode("zxcv0123!A"))
+						.email("admin")
+						.password(passwordEncoder.encode("1"))
 						.name("admin")
 						.address("서울특별시 금천구 가산로 99 110동 XXX호")
 						.phone("010-111-2222")

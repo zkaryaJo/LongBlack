@@ -52,7 +52,7 @@ public class UserMainController {
 	@GetMapping("/user/main")
 	public String main(Model model){
 		
-		return "div";
+		return "user/main";
 	}
 	
 	/* 로그인페이지 */
