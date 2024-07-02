@@ -43,6 +43,11 @@ public class Order {
     @JoinColumn(name = "member_id")
     @JsonBackReference
     private Member member;
+    
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    @JsonBackReference
+    private Store store;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date orderDate;
